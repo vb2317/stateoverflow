@@ -1,0 +1,17 @@
+name,device_type,price_inr,learning_hours,maintenance_hours_per_year,power_adequacy_score
+MacBook Air 13″ (M4),mac,99900.0,1.0,4.0,7.5
+MacBook Air 15″ (M4),mac,124900.0,1.0,4.0,7.5
+MacBook Pro 14″ (M4),mac,169900.0,1.5,5.0,8.3
+MacBook Pro 14″ (M4 Pro or M4 Max),mac,199900.0,2.0,6.0,9.2
+MacBook Pro 16″ (M4 Pro or M4 Max),mac,249900.0,2.0,6.0,9.6
+"iMac (M4, two ports)",mac,134900.0,0.5,3.0,7.5
+"iMac (M4, four ports)",mac,154900.0,0.5,3.0,7.5
+Mac mini (M4 or M4 Pro),mac,59900.0,0.5,2.0,7.8
+Mac Studio (M4 Max or M3 Ultra),mac,214900.0,1.0,3.0,9.8
+Mac Pro (M2 Ultra),mac,729900.0,1.0,6.0,9.2
+iPad Pro 11″ (M4),ipad,99900.0,,,
+iPad Pro 13″ (M4),ipad,129900.0,,,
+iPad Air 11″ (M3),ipad,59900.0,,,
+iPad Air 13″ (M3),ipad,79900.0,,,
+iPad 11″ (A16),ipad,34900.0,,,
+iPad mini 8.3″ (A17 Pro),ipad,49900.0,,,

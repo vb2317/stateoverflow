@@ -1,0 +1,2462 @@
+[
+  {
+    "model_key": "model-1",
+    "display_name": "Model 1",
+    "region": "IN",
+    "order_index": 0,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(13″) Ultra Retina XDR display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "M4",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": 12.0,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": 12.0,
+      "position": "Landscape",
+      "center_stage": true,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi {IPADPRO13_WI_SB_S}* Wi-Fi + Cellular {IPADPRO13_5G_SB_S}*"
+    },
+    "storage": {
+      "options_gb": [
+        1000,
+        2000
+      ],
+      "min_gb": 1000,
+      "max_gb": 2000,
+      "raw_text": "6"
+    },
+    "connector": "USB-C (Thunderbolt/USB 4)",
+    "finish_colors": [
+      "Space Black"
+    ],
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-2",
+    "display_name": "Model 2",
+    "region": "IN",
+    "order_index": 1,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "M3",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": 8.0,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": 12.0,
+      "position": null,
+      "center_stage": true,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi"
+    },
+    "storage": {
+      "options_gb": [
+        256,
+        512
+      ],
+      "min_gb": 256,
+      "max_gb": 512,
+      "raw_text": "Wi-Fi"
+    },
+    "connector": null,
+    "finish_colors": [
+      "Space Grey"
+    ],
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-3",
+    "display_name": "Model 3",
+    "region": "IN",
+    "order_index": 2,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(11″) Ultra Retina XDR display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "A16",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": 12.0,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": true
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "More from Mac"
+    },
+    "storage": {
+      "options_gb": [
+        256
+      ],
+      "min_gb": 256,
+      "max_gb": 256,
+      "raw_text": "256GB"
+    },
+    "connector": "USB-C (Thunderbolt/USB 4)",
+    "finish_colors": [
+      "Blue"
+    ],
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-4",
+    "display_name": "Model 4",
+    "region": "IN",
+    "order_index": 3,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": false
+    },
+    "processor": {
+      "soc": "A17 Pro",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": 8.0,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": true
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi + Cellular"
+    },
+    "storage": {
+      "options_gb": [
+        128
+      ],
+      "min_gb": 128,
+      "max_gb": 128,
+      "raw_text": "128GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-5",
+    "display_name": "Model 5",
+    "region": "IN",
+    "order_index": 4,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(13″) Liquid Retina display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "M2",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": 5.0,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "{IPADPRO13_5G_SB_S}*"
+    },
+    "storage": {
+      "options_gb": [
+        64
+      ],
+      "min_gb": 64,
+      "max_gb": 64,
+      "raw_text": "64GB"
+    },
+    "connector": "Lightning",
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-6",
+    "display_name": "Model 6",
+    "region": "IN",
+    "order_index": 5,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "M1",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": 12.0,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": true
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi {IPADPRO11_WI_SB_S}* Wi-Fi + Cellular {IPADPRO11_5G_SB_S}*"
+    },
+    "storage": {
+      "options_gb": [
+        32
+      ],
+      "min_gb": 32,
+      "max_gb": 32,
+      "raw_text": "32GB"
+    },
+    "connector": "USB-C (Thunderbolt/USB 4)",
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-7",
+    "display_name": "Model 7",
+    "region": "IN",
+    "order_index": 6,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(11″) Liquid Retina display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": 8.0,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": true
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi"
+    },
+    "storage": {
+      "options_gb": [
+        128
+      ],
+      "min_gb": 128,
+      "max_gb": 128,
+      "raw_text": "128GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-8",
+    "display_name": "Model 8",
+    "region": "IN",
+    "order_index": 7,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": 12.0,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "{IPADPRO11_WI_SB_S}*"
+    },
+    "storage": {
+      "options_gb": [
+        64
+      ],
+      "min_gb": 64,
+      "max_gb": 64,
+      "raw_text": "64GB"
+    },
+    "connector": "Lightning",
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-9",
+    "display_name": "Model 9",
+    "region": "IN",
+    "order_index": 8,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(11″) Liquid Retina display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": 8.0,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": 12.0,
+      "position": "Landscape",
+      "center_stage": true,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi + Cellular"
+    },
+    "storage": {
+      "options_gb": [
+        32
+      ],
+      "min_gb": 32,
+      "max_gb": 32,
+      "raw_text": "32GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-10",
+    "display_name": "Model 10",
+    "region": "IN",
+    "order_index": 9,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": 5.0,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": 12.0,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "{IPADPRO11_5G_SB_S}*"
+    },
+    "storage": {
+      "options_gb": [
+        128
+      ],
+      "min_gb": 128,
+      "max_gb": 128,
+      "raw_text": "128GB"
+    },
+    "connector": "Lightning",
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-11",
+    "display_name": "Model 11",
+    "region": "IN",
+    "order_index": 10,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(8.3″) Liquid Retina display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "M2",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi {IPADAIR13_2025_WI}* Wi-Fi + Cellular {IPADAIR13_2025_5G}*"
+    },
+    "storage": {
+      "options_gb": [
+        64
+      ],
+      "min_gb": 64,
+      "max_gb": 64,
+      "raw_text": "64GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-12",
+    "display_name": "Model 12",
+    "region": "IN",
+    "order_index": 11,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "M1",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": 10.0,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": 12.0,
+      "position": "Landscape",
+      "center_stage": true,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi"
+    },
+    "storage": {
+      "options_gb": [
+        16
+      ],
+      "min_gb": 16,
+      "max_gb": 16,
+      "raw_text": "16GB"
+    },
+    "connector": "Lightning",
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-13",
+    "display_name": "Model 13",
+    "region": "IN",
+    "order_index": 12,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(12.9″) Liquid Retina XDR display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "{IPADAIR13_2025_WI}*"
+    },
+    "storage": {
+      "options_gb": [
+        64
+      ],
+      "min_gb": 64,
+      "max_gb": 64,
+      "raw_text": "64GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-14",
+    "display_name": "Model 14",
+    "region": "IN",
+    "order_index": 13,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": "4K video, ProRes"
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi + Cellular"
+    },
+    "storage": {
+      "options_gb": [
+        32
+      ],
+      "min_gb": 32,
+      "max_gb": 32,
+      "raw_text": "32GB"
+    },
+    "connector": "Lightning",
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-15",
+    "display_name": "Model 15",
+    "region": "IN",
+    "order_index": 14,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(12.9″) Liquid Retina XDR display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": "4K video"
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "{IPADAIR13_2025_5G}*"
+    },
+    "storage": {
+      "options_gb": [
+        64
+      ],
+      "min_gb": 64,
+      "max_gb": 64,
+      "raw_text": "64GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-16",
+    "display_name": "Model 16",
+    "region": "IN",
+    "order_index": 15,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": "4K video, ProRes"
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi {IPADAIR11_2025_WI}* Wi-Fi + Cellular {IPADAIR11_2025_5G}*"
+    },
+    "storage": {
+      "options_gb": [
+        16
+      ],
+      "min_gb": 16,
+      "max_gb": 16,
+      "raw_text": "16GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-17",
+    "display_name": "Model 17",
+    "region": "IN",
+    "order_index": 16,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(12.9″) Liquid Retina display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "M2",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": "4K video"
+    },
+    "front_camera": {
+      "mp": 12.0,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi"
+    },
+    "storage": {
+      "options_gb": [
+        512
+      ],
+      "min_gb": 512,
+      "max_gb": 512,
+      "raw_text": "512GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-18",
+    "display_name": "Model 18",
+    "region": "IN",
+    "order_index": 17,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "M1",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": "1080p video"
+    },
+    "front_camera": {
+      "mp": 7.0,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "{IPADAIR11_2025_WI}*"
+    },
+    "storage": {
+      "options_gb": [
+        256
+      ],
+      "min_gb": 256,
+      "max_gb": 256,
+      "raw_text": "256GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-19",
+    "display_name": "Model 19",
+    "region": "IN",
+    "order_index": 18,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(12.9″) Liquid Retina display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "A14",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": "4K video, ProRes"
+    },
+    "front_camera": {
+      "mp": 1.2,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi + Cellular"
+    },
+    "storage": {
+      "options_gb": [
+        128
+      ],
+      "min_gb": 128,
+      "max_gb": 128,
+      "raw_text": "128GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-20",
+    "display_name": "Model 20",
+    "region": "IN",
+    "order_index": 19,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "A12",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": "4K video"
+    },
+    "front_camera": {
+      "mp": 12.0,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "{IPADAIR11_2025_5G}*"
+    },
+    "storage": {
+      "options_gb": [
+        256
+      ],
+      "min_gb": 256,
+      "max_gb": 256,
+      "raw_text": "256GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-21",
+    "display_name": "Model 21",
+    "region": "IN",
+    "order_index": 20,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(12.9″) Retina display",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": "1080p video"
+    },
+    "front_camera": {
+      "mp": 7.0,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi {IPAD2025_WIFI}* Wi-Fi + Cellular {IPAD2025_5G}*"
+    },
+    "storage": {
+      "options_gb": [
+        128
+      ],
+      "min_gb": 128,
+      "max_gb": 128,
+      "raw_text": "128GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-22",
+    "display_name": "Model 22",
+    "region": "IN",
+    "order_index": 21,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(11″) Liquid Retina display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "A7",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": 5.0,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi"
+    },
+    "storage": {
+      "options_gb": [
+        256
+      ],
+      "min_gb": 256,
+      "max_gb": 256,
+      "raw_text": "256GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-23",
+    "display_name": "Model 23",
+    "region": "IN",
+    "order_index": 22,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "A14",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": 12.0,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "{IPAD2025_WIFI}*"
+    },
+    "storage": {
+      "options_gb": [
+        64
+      ],
+      "min_gb": 64,
+      "max_gb": 64,
+      "raw_text": "64GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-24",
+    "display_name": "Model 24",
+    "region": "IN",
+    "order_index": 23,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(11″) Liquid Retina display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "A13",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": 7.0,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi + Cellular"
+    },
+    "storage": {
+      "options_gb": [
+        32
+      ],
+      "min_gb": 32,
+      "max_gb": 32,
+      "raw_text": "32GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-25",
+    "display_name": "Model 25",
+    "region": "IN",
+    "order_index": 24,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "A12",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": 1.2,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "{IPAD2025_5G}*"
+    },
+    "storage": {
+      "options_gb": [
+        256
+      ],
+      "min_gb": 256,
+      "max_gb": 256,
+      "raw_text": "256GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-26",
+    "display_name": "Model 26",
+    "region": "IN",
+    "order_index": 25,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(11″) Liquid Retina display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "A10",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": 12.0,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi {IPADMINI2024_WIFI}* Wi-Fi + Cellular {IPADMINI2024_4G}*"
+    },
+    "storage": {
+      "options_gb": [
+        128
+      ],
+      "min_gb": 128,
+      "max_gb": 128,
+      "raw_text": "128GB"
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-27",
+    "display_name": "Model 27",
+    "region": "IN",
+    "order_index": 26,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "A9",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": 1.2,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi"
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-28",
+    "display_name": "Model 28",
+    "region": "IN",
+    "order_index": 27,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(11″) Liquid Retina display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "A15",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": 12.0,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "{IPADMINI2024_WIFI}*"
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-29",
+    "display_name": "Model 29",
+    "region": "IN",
+    "order_index": 28,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "A12",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": 7.0,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "Wi-Fi + Cellular"
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-30",
+    "display_name": "Model 30",
+    "region": "IN",
+    "order_index": 29,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(10.5″) Retina display",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "A8",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": 1.2,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": "{IPADMINI2024_4G}*"
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-31",
+    "display_name": "Model 31",
+    "region": "IN",
+    "order_index": 30,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(9.7″) Retina display",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": "A7",
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-32",
+    "display_name": "Model 32",
+    "region": "IN",
+    "order_index": 31,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(13″) Liquid Retina display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-33",
+    "display_name": "Model 33",
+    "region": "IN",
+    "order_index": 32,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-34",
+    "display_name": "Model 34",
+    "region": "IN",
+    "order_index": 33,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(11″) Liquid Retina display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-35",
+    "display_name": "Model 35",
+    "region": "IN",
+    "order_index": 34,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-36",
+    "display_name": "Model 36",
+    "region": "IN",
+    "order_index": 35,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(10.9″) Liquid Retina display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-37",
+    "display_name": "Model 37",
+    "region": "IN",
+    "order_index": 36,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-38",
+    "display_name": "Model 38",
+    "region": "IN",
+    "order_index": 37,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(10.9″) Liquid Retina display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-39",
+    "display_name": "Model 39",
+    "region": "IN",
+    "order_index": 38,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-40",
+    "display_name": "Model 40",
+    "region": "IN",
+    "order_index": 39,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(10.5″) Retina display",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-41",
+    "display_name": "Model 41",
+    "region": "IN",
+    "order_index": 40,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(9.7″) Retina display",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-42",
+    "display_name": "Model 42",
+    "region": "IN",
+    "order_index": 41,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(10.9″) Liquid Retina display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-43",
+    "display_name": "Model 43",
+    "region": "IN",
+    "order_index": 42,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-44",
+    "display_name": "Model 44",
+    "region": "IN",
+    "order_index": 43,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(10.2″) Retina display",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-45",
+    "display_name": "Model 45",
+    "region": "IN",
+    "order_index": 44,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(9.7″) Retina display",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-46",
+    "display_name": "Model 46",
+    "region": "IN",
+    "order_index": 45,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(8.3″) Liquid Retina display 1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-47",
+    "display_name": "Model 47",
+    "region": "IN",
+    "order_index": 46,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "1",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-48",
+    "display_name": "Model 48",
+    "region": "IN",
+    "order_index": 47,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "(7.9″) Retina display",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-49",
+    "display_name": "Model 49",
+    "region": "IN",
+    "order_index": 48,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  },
+  {
+    "model_key": "model-50",
+    "display_name": "Model 50",
+    "region": "IN",
+    "order_index": 49,
+    "display": {
+      "size_in": null,
+      "panel": null,
+      "promotion": true,
+      "gamut": "",
+      "true_tone": true,
+      "anti_reflective": true,
+      "nano_texture_option": true
+    },
+    "processor": {
+      "soc": null,
+      "cpu_cores": null,
+      "gpu_cores": null,
+      "neural_engine_cores": null
+    },
+    "apple_intelligence": true,
+    "rear_camera": {
+      "wide_mp": null,
+      "ultra_wide_mp": null,
+      "video": null
+    },
+    "front_camera": {
+      "mp": null,
+      "position": null,
+      "center_stage": null,
+      "truedepth": null
+    },
+    "price": {
+      "currency": null,
+      "symbol": null,
+      "from_price": null,
+      "raw_text": ""
+    },
+    "storage": {
+      "options_gb": null,
+      "min_gb": null,
+      "max_gb": null,
+      "raw_text": ""
+    },
+    "connector": null,
+    "finish_colors": null,
+    "price_tokens": null
+  }
+]

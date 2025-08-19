@@ -1,0 +1,7 @@
+name,category,url,chip,ram_gb,storage_gb,storage_tb,battery_hours,weight_kg,price_inr,ports,display_inches,notes,learning_hours,maintenance_hours_per_year,power_adequacy_score
+iPad Pro 11″ (M4),ipad,https://www.apple.com/in/ipad-pro/,M4,,256,2.0,10.0,0.444,99900.0,USB‑C (Thunderbolt/USB 4),11.1,Wi‑Fi model weight; 'From' price (Wi‑Fi) in India,,,
+iPad Pro 13″ (M4),ipad,https://www.apple.com/in/ipad-pro/,M4,,256,2.0,10.0,0.579,129900.0,USB‑C (Thunderbolt/USB 4),13.0,Wi‑Fi model weight; 'From' price (Wi‑Fi) in India,,,
+iPad Air 11″ (M3),ipad,https://www.apple.com/in/ipad-air/,M3,8,128,1.0,10.0,0.46,59900.0,USB‑C,10.86,Wi‑Fi model weight; 'From' price (Wi‑Fi) in India,,,
+iPad Air 13″ (M3),ipad,https://www.apple.com/in/ipad-air/,M3,8,128,1.0,10.0,0.616,79900.0,USB‑C,12.9,Wi‑Fi model weight; 'From' price (Wi‑Fi) in India,,,
+iPad 11″ (A16),ipad,https://www.apple.com/in/ipad-11/,A16,,128,0.512,10.0,0.477,34900.0,USB‑C,10.86,Wi‑Fi model weight; 'From' price (Wi‑Fi) in India,,,
+iPad mini 8.3″ (A17 Pro),ipad,https://www.apple.com/in/ipad-mini/,A17 Pro,,128,0.512,10.0,0.293,49900.0,USB‑C,8.3,Wi‑Fi model weight; 'From' price (Wi‑Fi) in India,,,

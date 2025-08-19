@@ -1,0 +1,17 @@
+name,device_type,chip,ram_gb,storage_tb,battery_hours,weight_kg,display_inches,ports,need_ram_ok,need_storage_ok,need_battery_ok,need_weight_ok
+MacBook Air 13″ (M4),mac,M4,16.0,2.0,15.0,1.24,13.6,"[""MagSafe 3"", ""2x Thunderbolt 4 (USB-C)"", ""3.5mm""]",True,True,True,True
+MacBook Air 15″ (M4),mac,M4,16.0,2.0,15.0,1.51,15.3,"[""MagSafe 3"", ""2x Thunderbolt 4 (USB-C)"", ""3.5mm""]",True,True,True,True
+MacBook Pro 14″ (M4),mac,M4,16.0,2.0,16.0,1.55,14.2,"[""MagSafe 3"", ""3x Thunderbolt 4 (USB-C)"", ""HDMI"", ""SDXC"", ""3.5mm""]",True,True,True,True
+MacBook Pro 14″ (M4 Pro or M4 Max),mac,M4 Pro or M4 Max,24.0,8.0,14.0,1.6,14.2,"[""MagSafe 3"", ""3x Thunderbolt 5 (USB-C)"", ""HDMI"", ""SDXC"", ""3.5mm""]",True,True,False,True
+MacBook Pro 16″ (M4 Pro or M4 Max),mac,M4 Pro or M4 Max,24.0,8.0,17.0,2.14,16.2,"[""MagSafe 3"", ""3x Thunderbolt 5 (USB-C)"", ""HDMI"", ""SDXC"", ""3.5mm""]",True,True,True,False
+"iMac (M4, two ports)",mac,M4,16.0,2.0,,,24.0,"[""2x Thunderbolt / USB 4""]",True,True,False,False
+"iMac (M4, four ports)",mac,M4,16.0,2.0,,,24.0,"[""4x Thunderbolt 4"", ""Gigabit Ethernet""]",True,True,False,False
+Mac mini (M4 or M4 Pro),mac,M4 or M4 Pro,16.0,2.0,,0.67,,"[""Front: 2x USB-C, 3.5mm"", ""Back: 3x Thunderbolt 4, HDMI, Gigabit Ethernet""]",True,True,False,True
+Mac Studio (M4 Max or M3 Ultra),mac,M4 Max or M3 Ultra,36.0,8.0,,,,"[""Front: 2x USB-C, SDXC"", ""Back: 4x Thunderbolt 5, 2x USB-A, HDMI, 10GbE, 3.5mm""]",True,True,False,False
+Mac Pro (M2 Ultra),mac,M2 Ultra,64.0,8.0,,,,[],True,True,False,False
+iPad Pro 11″ (M4),ipad,M4,,2.0,10.0,0.444,11.1,USB‑C (Thunderbolt/USB 4),False,True,False,True
+iPad Pro 13″ (M4),ipad,M4,,2.0,10.0,0.579,13.0,USB‑C (Thunderbolt/USB 4),False,True,False,True
+iPad Air 11″ (M3),ipad,M3,8.0,1.0,10.0,0.46,10.86,USB‑C,False,True,False,True
+iPad Air 13″ (M3),ipad,M3,8.0,1.0,10.0,0.616,12.9,USB‑C,False,True,False,True
+iPad 11″ (A16),ipad,A16,,0.512,10.0,0.477,10.86,USB‑C,False,False,False,True
+iPad mini 8.3″ (A17 Pro),ipad,A17 Pro,,0.512,10.0,0.293,8.3,USB‑C,False,False,False,True
