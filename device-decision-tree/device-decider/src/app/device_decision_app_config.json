@@ -1,0 +1,30 @@
+{
+  "ignoredColumns": ["url", "notes"],
+  "columnAliases": { "price_inr": "Price" ,
+                     "ram_gb_sum": "Memory" ,
+                     "storage_tb_sum": "Disk Space TB" , 
+                     "carry_weight": "Weight" 
+                     },
+
+  "constraints": {
+    "includeColumns": ["ram_gb_sum", "storage_tb_sum", "price_inr"],
+    "defaults": {
+      "numeric": { "useDatasetRange": true },
+      "categorical": { "includes": "", "exact": false }
+    },
+    "overrides": {
+      "price_inr": { "min": 90000, "max": 160000 },
+      "ram_gb_sum": { "min": 32, "max": 256 },
+      "chip": { "includes": "M4 Pro,M4 Max" }
+    }
+  },
+
+  "tradeoffs": {
+    "selected": ["price_inr", "carry_weight", "battery_hours"],
+    "defaults": { "weight": 1, "direction": "lower" },
+    "overrides": {
+      "power_adequacy_score": { "direction": "higher", "weight": 2 },
+      "battery_hours": { "direction": "higher" }
+    }
+  }
+}
