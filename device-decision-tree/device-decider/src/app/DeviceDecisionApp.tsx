@@ -16,7 +16,7 @@ import React, { useMemo, useState } from "react";
  *  - config.tradeoffs.selected/defaults/overrides // as before
  */
 
-type Row = Record<string, string | number>;
+type Row = Record<string, string | number | boolean>;
 
 type ParsedCSV = {
   headers: string[];
@@ -27,9 +27,12 @@ type NumericConstraint = { min?: number; max?: number };
 
 type CategoricalConstraint = { includes?: string; exact?: boolean };
 
-type Constraint = NumericConstraint | CategoricalConstraint;
+type BooleanConstraint = { value?: boolean };
+
+type Constraint = NumericConstraint | CategoricalConstraint | BooleanConstraint;
 
 type Tradeoff = { key: string; weight: number; direction: "higher" | "lower" };
+
 
 type Contribution = {
   key: string;
@@ -61,7 +64,7 @@ type AppConfig = {
       numeric?: { useDatasetRange?: boolean; min?: number | null; max?: number | null };
       categorical?: { includes?: string; exact?: boolean };
     };
-    overrides?: Record<string, NumericConstraint | CategoricalConstraint>;
+    overrides?: Record<string, NumericConstraint | CategoricalConstraint | BooleanConstraint>;
   };
   tradeoffs?: {
     selected?: string[];
@@ -70,24 +73,13 @@ type AppConfig = {
   };
 };
 
+
 // ----------------------------- CSV Parsing ------------------------------ //
 
 function parseCSV(text: string): ParsedCSV {
   const rows: string[][] = [];
-  let cur = "";
   let field = "";
   let inQuotes = false;
-
-  const pushField = () => {
-    rows[rows.length - 1].push(field);
-    field = "";
-  };
-
-  const pushRow = () => {
-    if (rows.length === 0 || rows[rows.length - 1].length > 0 || field.length > 0 || inQuotes) {
-      // ensure row exists
-    }
-  };
 
   rows.push([]);
   for (let i = 0; i < text.length; i++) {
@@ -137,7 +129,7 @@ function parseCSV(text: string): ParsedCSV {
     const obj: Row = {};
     headers.forEach((h, idx) => {
       const raw = r[idx] ?? "";
-      const v = tryCoerceNumber(raw);
+      const v = tryCoerceValue(raw);
       obj[h] = v;
     });
     return obj;
@@ -157,18 +149,39 @@ function isSimpleNumberString(t: string): boolean {
   return !(t === '-' || t === '.' || t === '-.');
 }
 
-function tryCoerceNumber(s: string): string | number {
+function tryCoerceValue(s: string): string | number | boolean {
   const t = s.trim();
   if (t === "") return "";
   if ((t.startsWith("[") && t.endsWith("]")) || (t.startsWith("{") && t.endsWith("}"))) return t;
+  const tl = t.toLowerCase();
+  if (tl === "true") return true;
+  if (tl === "false") return false;
   const n = Number(t);
   return Number.isFinite(n) && isSimpleNumberString(t) ? n : t;
 }
 
 // ----------------------------- Helpers ------------------------------ //
 
+function summarizeBooleanCounts(rows: Row[], keys: string[]) {
+  return keys.map((key) => {
+    let trueCount = 0, falseCount = 0, otherCount = 0;
+    for (const r of rows) {
+      const v = r[key];
+      if (typeof v === "boolean") (v ? trueCount++ : falseCount++);
+      else if (v !== undefined) otherCount++;
+    }
+    return { key, trueCount, falseCount, otherCount, total: rows.length };
+  });
+}
+
+// ----------------------------- Helpers ------------------------------ //
+
 function isNumericColumn(rows: Row[], key: string): boolean {
   return rows.some((r) => typeof r[key] === "number");
+}
+
+function isBooleanColumn(rows: Row[], key: string): boolean {
+  return rows.some((r) => typeof r[key] === "boolean");
 }
 
 function getMinMax(rows: Row[], key: string): { min: number; max: number } | null {
@@ -212,6 +225,9 @@ function applyConstraints(rows: Row[], constraints: Record<string, Constraint>, 
         const nc = c as NumericConstraint;
         if (nc.min !== undefined && v < nc.min) return false;
         if (nc.max !== undefined && v > nc.max) return false;
+      } else if (typeof v === "boolean") {
+        const bc = c as BooleanConstraint;
+        if (typeof bc.value === "boolean" && v !== bc.value) return false;
       } else {
         const cc = c as CategoricalConstraint;
         const term = (v ?? "").toString();
@@ -228,6 +244,83 @@ function applyConstraints(rows: Row[], constraints: Record<string, Constraint>, 
     }
     return true;
   });
+}
+
+// Diagnostic helper: find first failing key for a row given current constraints
+function firstFailingKey(row: Row, constraints: Record<string, Constraint>, headers: string[]): string | null {
+  for (const key of headers) {
+    const c = constraints[key];
+    if (!c) continue;
+    const v = row[key];
+    if (typeof v === "number") {
+      const nc = c as NumericConstraint;
+      if (nc.min !== undefined && v < nc.min) return key;
+      if (nc.max !== undefined && v > nc.max) return key;
+    } else if (typeof v === "boolean") {
+      const bc = c as BooleanConstraint;
+      if (typeof bc.value === "boolean" && v !== bc.value) return key;
+    } else {
+      const cc = c as CategoricalConstraint;
+      const term = (v ?? "").toString();
+      if (cc.includes && cc.includes.trim() !== "") {
+        const tokens = cc.includes.split(",").map((x) => x.trim()).filter(Boolean);
+        if (tokens.length) {
+          const matched = tokens.some((tok) =>
+            cc.exact ? term.toLowerCase() === tok.toLowerCase() : term.toLowerCase().includes(tok.toLowerCase())
+          );
+          if (!matched) return key;
+        }
+      }
+    }
+  }
+  return null;
+}
+
+function analyzeConstraintEffects(rows: Row[], constraints: Record<string, Constraint>, headers: string[]) {
+  type Breakdown = {
+    key: string;
+    type: 'numeric' | 'boolean' | 'categorical' | 'mixed' | 'unknown';
+    total: number;
+    failMin?: number;
+    failMax?: number;
+    failBool?: number;
+    failCat?: number;
+  };
+  const out: Record<string, Breakdown> = {};
+  const total = rows.length;
+  for (const key of headers) {
+    const c = constraints[key];
+    if (!c) continue;
+    const bd: Breakdown = { key, type: 'unknown', total };
+    let sawNum = false, sawBool = false, sawOther = false;
+    for (const r of rows) {
+      const v = r[key];
+      if (typeof v === 'number') {
+        sawNum = true;
+        const nc = c as NumericConstraint;
+        if (nc.min !== undefined && v < nc.min) bd.failMin = (bd.failMin ?? 0) + 1;
+        if (nc.max !== undefined && v > nc.max) bd.failMax = (bd.failMax ?? 0) + 1;
+      } else if (typeof v === 'boolean') {
+        sawBool = true;
+        const bc = c as BooleanConstraint;
+        if (typeof bc.value === 'boolean' && v !== bc.value) bd.failBool = (bd.failBool ?? 0) + 1;
+      } else {
+        sawOther = true;
+        const cc = c as CategoricalConstraint;
+        const term = (v ?? '').toString();
+        if (cc.includes && cc.includes.trim() !== '') {
+          const tokens = cc.includes.split(',').map((x) => x.trim()).filter(Boolean);
+          if (tokens.length) {
+            const matched = tokens.some((tok) => cc.exact ? term.toLowerCase() === tok.toLowerCase() : term.toLowerCase().includes(tok.toLowerCase()));
+            if (!matched) bd.failCat = (bd.failCat ?? 0) + 1;
+          }
+        }
+      }
+    }
+    bd.type = sawNum && !sawBool && !sawOther ? 'numeric' : sawBool && !sawNum && !sawOther ? 'boolean' : sawOther && !sawNum && !sawBool ? 'categorical' : (sawNum || sawBool) && sawOther ? 'mixed' : 'unknown';
+    out[key] = bd;
+  }
+  return Object.values(out).sort((a, b) => ((b.failMin ?? 0) + (b.failMax ?? 0) + (b.failBool ?? 0) + (b.failCat ?? 0)) - ((a.failMin ?? 0) + (a.failMax ?? 0) + (a.failBool ?? 0) + (a.failCat ?? 0)));
 }
 
 // ----------------------------- Optimizer ------------------------------ //
@@ -300,7 +393,8 @@ export default function DeviceDecisionApp() {
 
   const nameColumn = useMemo(() => (visibleHeaders.includes("name") ? "name" : visibleHeaders[0] ?? ""), [visibleHeaders]);
   const numericColumns = useMemo(() => visibleHeaders.filter((h) => isNumericColumn(rawRows, h)), [visibleHeaders, rawRows]);
-  const categoricalColumns = useMemo(() => visibleHeaders.filter((h) => !isNumericColumn(rawRows, h)), [visibleHeaders, rawRows]);
+  const booleanColumns = useMemo(() => visibleHeaders.filter((h) => isBooleanColumn(rawRows, h)), [visibleHeaders, rawRows]);
+  const categoricalColumns = useMemo(() => visibleHeaders.filter((h) => !isNumericColumn(rawRows, h) && !isBooleanColumn(rawRows, h)), [visibleHeaders, rawRows]);
 
   // ----------------- Initialization from CSV + Config ----------------- //
 
@@ -315,6 +409,9 @@ export default function DeviceDecisionApp() {
       }
       return { min: cdefs?.numeric?.min ?? undefined, max: cdefs?.numeric?.max ?? undefined };
     }
+    if (isBooleanColumn(rows, key)) {
+      return { value: undefined };
+    }
     return { includes: cdefs?.categorical?.includes ?? "", exact: cdefs?.categorical?.exact ?? false };
   }
 
@@ -324,19 +421,45 @@ export default function DeviceDecisionApp() {
       const hk = resolveKey(k, headers, cfg);
       if (!hk || !headers.includes(hk)) continue;
       const isNum = isNumericColumn(rows, hk);
-      const patch = over[k] as any;
+      const isBool = isBooleanColumn(rows, hk);
+      const patch = over[k] as Record<string, unknown>;
       if (isNum) {
         const prev = (base[hk] as NumericConstraint) ?? {};
-        base[hk] = { ...prev, min: patch.min ?? prev.min, max: patch.max ?? prev.max };
+        base[hk] = { 
+          ...prev, 
+          min: typeof patch.min === 'number' ? patch.min : prev.min, 
+          max: typeof patch.max === 'number' ? patch.max : prev.max 
+        };
+      } else if (isBool) {
+        const prev = (base[hk] as BooleanConstraint) ?? {};
+        base[hk] = { ...prev, value: typeof patch.value === "boolean" ? patch.value : prev.value };
       } else {
         const prev = (base[hk] as CategoricalConstraint) ?? {};
-        base[hk] = { ...prev, includes: patch.includes ?? prev.includes, exact: patch.exact ?? prev.exact };
+        base[hk] = { 
+          ...prev, 
+          includes: typeof patch.includes === 'string' ? patch.includes : prev.includes, 
+          exact: typeof patch.exact === 'boolean' ? patch.exact : prev.exact 
+        };
       }
     }
   }
 
   function initializeFromData(headers: string[], rows: Row[], cfg: AppConfig | null) {
     if (!headers.length) return;
+
+    // Logging: column inference snapshot
+    try {
+      console.groupCollapsed("[Init] Column inference snapshot");
+      const boolCols = headers.filter((h) => isBooleanColumn(rows, h));
+      const numCols = headers.filter((h) => isNumericColumn(rows, h));
+      const catCols = headers.filter((h) => !boolCols.includes(h) && !numCols.includes(h));
+      console.log("visible headers", visibleHeaders);
+      console.log("boolean columns", boolCols);
+      console.log("numeric columns", numCols);
+      console.log("categorical columns", catCols);
+      console.table(summarizeBooleanCounts(rows, boolCols));
+      console.groupEnd();
+    } catch {}
 
     // Build constraints for all VISIBLE columns (not ignored);
     // the panel and filtering will only use constraintHeaders subset.
@@ -371,6 +494,19 @@ export default function DeviceDecisionApp() {
     setTradeoffs(trade);
 
     // Apply constraints only for the chosen constraintHeaders subset
+    try {
+      console.groupCollapsed("[Before Filter] Constraint summary");
+      const summary = constraintHeaders.map((h) => ({
+        key: h,
+        type: isNumericColumn(rows, h) ? "numeric" : isBooleanColumn(rows, h) ? "boolean" : "categorical",
+        constraint: constraints[h] ?? base[h],
+      }));
+      console.table(summary);
+      const boolCounts = summarizeBooleanCounts(rows, constraintHeaders.filter((h) => isBooleanColumn(rows, h)));
+      if (boolCounts.length) console.table(boolCounts);
+      console.groupEnd();
+    } catch {}
+
     const fr = applyConstraints(rows, base, constraintHeaders);
     setFilteredRows(fr);
     const sr = computeScores(fr, Object.values(trade));
@@ -401,7 +537,37 @@ export default function DeviceDecisionApp() {
   };
 
   const onApplyConstraints = () => {
+    try {
+      console.groupCollapsed("[Apply] Constraint summary before filtering");
+      const summary = constraintHeaders.map((h) => ({ key: h, constraint: constraints[h] }));
+      console.table(summary);
+      const boolCounts = summarizeBooleanCounts(rawRows, constraintHeaders.filter((h) => isBooleanColumn(rawRows, h)));
+      if (boolCounts.length) console.table(boolCounts);
+      console.groupEnd();
+    } catch {}
     const fr = applyConstraints(rawRows, constraints, constraintHeaders);
+    if (fr.length === 0) {
+      try {
+        const reasons: Record<string, number> = {};
+        const sample = rawRows.slice(0, Math.min(200, rawRows.length));
+        for (const r of sample) {
+          const key = firstFailingKey(r, constraints, constraintHeaders) ?? "(none)";
+          reasons[key] = (reasons[key] ?? 0) + 1;
+        }
+        console.groupCollapsed("[Apply] Filter resulted in 0 rows — diagnostics");
+        console.log("First failing key counts (sample)");
+        console.table(Object.entries(reasons).map(([key, count]) => ({ key, count })));
+        console.log("Per-column failure breakdown (full set)");
+        console.table(analyzeConstraintEffects(rawRows, constraints, constraintHeaders));
+        const one = rawRows[0];
+        if (one) {
+          const obj: Record<string, unknown> = {};
+          for (const h of constraintHeaders) obj[h] = one[h];
+          console.log("Sample row[0] values for constraint headers", obj);
+        }
+        console.groupEnd();
+      } catch {}
+    }
     setFilteredRows(fr);
     const sr = computeScores(fr, Object.values(tradeoffs));
     setScoredRows(sr);
@@ -414,6 +580,27 @@ export default function DeviceDecisionApp() {
     setScoredRows(sr); setTree(buildBalancedTree(sr));
   }, [filteredRows, tradeoffs]);
 
+  // Log the table after applying constraints (whenever filteredRows changes)
+  React.useEffect(() => {
+    try {
+      const rowsToLog = filteredRows.map((row) => {
+        const out: Record<string, unknown> = {};
+        for (const h of visibleHeaders) out[h] = row[h];
+        return out;
+      });
+      // Collapsed group to avoid noisy console; expand when needed
+      console.groupCollapsed("[After Filter] Filtered rows table (%d)", filteredRows.length);
+      const boolCounts = summarizeBooleanCounts(filteredRows, visibleHeaders.filter((h) => isBooleanColumn(filteredRows as Row[], h)));
+      if (boolCounts.length) {
+        console.log("Boolean column counts after filter:");
+        console.table(boolCounts);
+      }
+      console.table(rowsToLog);
+      console.groupEnd();
+    } catch (e) {
+      console.log("[After Filter] Filtered rows (%d)", filteredRows.length, filteredRows);
+    }
+  }, [filteredRows, visibleHeaders]);
   const exportTree = () => {
     if (!tree) return;
     const blob = new Blob([JSON.stringify(tree, null, 2)], { type: "application/json" });
@@ -435,6 +622,9 @@ export default function DeviceDecisionApp() {
         const baseline: NumericConstraint = defaultsNumUseRange ? { min: mm.min, max: mm.max } : { min: defaultNumMin ?? undefined, max: defaultNumMax ?? undefined };
         const cur = current as NumericConstraint;
         if (cur.min !== baseline.min || cur.max !== baseline.max) overrides[h] = { min: cur.min, max: cur.max };
+      } else if (isBooleanColumn(rawRows, h)) {
+        const cur = current as BooleanConstraint;
+        if (typeof cur.value === "boolean") overrides[h] = { value: cur.value };
       } else {
         const cur = current as CategoricalConstraint;
         if ((cur.includes ?? "") !== defaultCat.includes || (cur.exact ?? false) !== defaultCat.exact) overrides[h] = { includes: cur.includes ?? "", exact: cur.exact ?? false };
@@ -495,16 +685,16 @@ export default function DeviceDecisionApp() {
           <>
             <ConfigBadge config={config} />
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <ConstraintsPanel
-                headers={constraintHeaders}
-                numericColumns={numericColumns.filter((h) => constraintHeaders.includes(h))}
-                categoricalColumns={categoricalColumns.filter((h) => constraintHeaders.includes(h))}
-                constraints={constraints}
-                rawRows={rawRows}
-                onChange={setConstraints}
-                onApply={onApplyConstraints}
-              />
-
+            <ConstraintsPanel
+              headers={constraintHeaders}
+              numericColumns={numericColumns.filter((h) => constraintHeaders.includes(h))}
+              booleanColumns={booleanColumns.filter((h) => constraintHeaders.includes(h))}
+              categoricalColumns={categoricalColumns.filter((h) => constraintHeaders.includes(h))}
+              constraints={constraints}
+              rawRows={rawRows}
+              onChange={setConstraints}
+              onApply={onApplyConstraints}
+            /> 
               <WeightsPanel
                 numericColumns={numericColumns} // tradeoffs unaffected by constraint subset
                 selectedTradeoffs={selectedTradeoffs}
@@ -558,6 +748,7 @@ function ConfigBadge({ config }: { config: AppConfig | null }) {
 type ConstraintsPanelProps = {
   headers: string[];
   numericColumns: string[];
+  booleanColumns: string[];
   categoricalColumns: string[];
   constraints: Record<string, Constraint>;
   rawRows: Row[];
@@ -565,12 +756,25 @@ type ConstraintsPanelProps = {
   onApply: () => void;
 };
 
-function ConstraintsPanel({ headers, numericColumns, categoricalColumns, constraints, rawRows, onChange, onApply }: ConstraintsPanelProps) {
+function ConstraintsPanel({ headers, numericColumns, booleanColumns, categoricalColumns, constraints, rawRows, onChange, onApply }: ConstraintsPanelProps) {
   const updateNumeric = (key: string, patch: Partial<NumericConstraint>) => {
     onChange({ ...constraints, [key]: { ...(constraints[key] as NumericConstraint), ...patch } });
   };
   const updateCategorical = (key: string, patch: Partial<CategoricalConstraint>) => {
     onChange({ ...constraints, [key]: { ...(constraints[key] as CategoricalConstraint), ...patch } });
+  };
+  const updateBoolean = (key: string, patch: Partial<BooleanConstraint>) => {
+    const next = { ...constraints, [key]: { ...(constraints[key] as BooleanConstraint), ...patch } };
+    try {
+      console.groupCollapsed("[UI] Boolean constraint change");
+      console.log("key", key);
+      console.log("patch", patch);
+      console.log("next[key]", next[key]);
+      const sampleCounts = summarizeBooleanCounts(rawRows, [key]);
+      console.table(sampleCounts);
+      console.groupEnd();
+    } catch {}
+    onChange(next);
   };
 
   return (
@@ -587,6 +791,10 @@ function ConstraintsPanel({ headers, numericColumns, categoricalColumns, constra
             {numericColumns.includes(h) ? (
               <div className="grid grid-cols-2 gap-2">
                 <NumericRangeEditor keyName={h} rows={rawRows} constraint={constraints[h] as NumericConstraint} onChange={(patch) => updateNumeric(h, patch)} />
+              </div>
+            ) : booleanColumns.includes(h) ? (
+              <div className="grid grid-cols-1 gap-2">
+                <BooleanConstraintEditor keyName={h} constraint={constraints[h] as BooleanConstraint} onChange={(patch) => updateBoolean(h, patch)} />
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-2">
@@ -625,6 +833,26 @@ function NumericRangeEditor({ keyName, rows, constraint, onChange }: NumericRang
         <label className="text-xs text-neutral-400 w-16">max</label>
         <input type="number" value={Number(maxVal)} onChange={(e) => onChange({ max: e.target.value === "" ? undefined : Number(e.target.value) })} className="w-full px-2 py-1 rounded-md bg-neutral-800 border border-neutral-700 text-sm" />
       </div>
+    </>
+  );
+}
+
+type BooleanConstraintEditorProps = { keyName: string; constraint: BooleanConstraint | undefined; onChange: (patch: Partial<BooleanConstraint>) => void };
+
+function BooleanConstraintEditor({ keyName, constraint, onChange }: BooleanConstraintEditorProps) {
+  const val = typeof constraint?.value === "boolean" ? (constraint!.value ? "true" : "false") : "";
+  return (
+    <>
+      <label className="text-xs text-neutral-400">value</label>
+      <select
+        value={val}
+        onChange={(e) => onChange({ value: e.target.value === "" ? undefined : e.target.value === "true" })}
+        className="w-full px-2 py-1 rounded-md bg-neutral-800 border border-neutral-700 text-sm"
+      >
+        <option value="">Any</option>
+        <option value="true">True</option>
+        <option value="false">False</option>
+      </select>
     </>
   );
 }

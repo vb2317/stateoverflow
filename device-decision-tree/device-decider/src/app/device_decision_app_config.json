@@ -7,7 +7,7 @@
                      },
 
   "constraints": {
-    "includeColumns": ["ram_gb_sum", "storage_tb_sum", "price_inr"],
+    "includeColumns": ["ram_gb_sum", "storage_tb_sum", "price_inr", "portable", "coding_compatible", "apple_pencil_compatible"],
     "defaults": {
       "numeric": { "useDatasetRange": true },
       "categorical": { "includes": "", "exact": false }
