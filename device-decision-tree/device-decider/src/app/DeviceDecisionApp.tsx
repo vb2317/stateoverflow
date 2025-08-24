@@ -629,21 +629,14 @@ function analyzeConstraintEffects(rows: Row[], constraints: Record<string, Const
 // ----------------------------- Optimizer ------------------------------ //
 
 function computeScores(rows: Row[], tradeoffs: Tradeoff[], nameColumn: string): ScoredRow[] {
-  console.log("[computeScores] Starting with:", {
-    rowsCount: rows.length,
-    tradeoffsCount: tradeoffs.length,
-    tradeoffs: tradeoffs.map(t => ({ key: t.key, weight: t.weight, direction: t.direction }))
-  });
   
   if (rows.length === 0 || tradeoffs.length === 0) {
-    console.log("[computeScores] No rows or tradeoffs, returning zero scores");
     return rows.map((r) => ({ ...r, __score: 0, __contribs: [] } as unknown as ScoredRow));
   }
   
   const mm: Record<string, { min: number; max: number }> = {};
   for (const t of tradeoffs) {
     mm[t.key] = getMinMax(rows, t.key) ?? { min: 0, max: 0 };
-    console.log(`[computeScores] Min/max for ${t.key}:`, mm[t.key]);
   }
   
   return rows.map((row) => {
@@ -656,12 +649,9 @@ function computeScores(rows: Row[], tradeoffs: Tradeoff[], nameColumn: string): 
       const directedComponent = t.direction === "higher" ? normalized : 1 - normalized;
       const contribution = t.weight * directedComponent;
       
-      console.log(`[computeScores] ${t.key}: raw=${raw}, value=${value}, min=${m.min}, max=${m.max}, normalized=${normalized}, directed=${directedComponent}, contribution=${contribution}`);
-      
       return { key: t.key, value: Number.isFinite(value) ? value : NaN, normalized, weight: t.weight, directedComponent, contribution };
     });
     const __score = contribs.reduce((s, c) => s + c.contribution, 0);
-    console.log(`[computeScores] Row ${row[nameColumn || 'unknown']} total score:`, __score, contribs.map(c => `${c.key}:${c.contribution}`));
     return { ...row, __score, __contribs: contribs } as unknown as ScoredRow;
   });
 }

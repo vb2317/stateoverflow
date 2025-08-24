@@ -291,18 +291,19 @@ function buildHierarchy(root: Decision) {
 function collectPathIds(root: Decision, toLeafId?: string) {
   const path = new Set<string>();
   if (!toLeafId) return path;
+  const target = String(toLeafId);
 
   function dfs(node: TreeNode, stack: string[]): boolean {
     if (isOption(node)) {
-      if (node.id === toLeafId) {
-        for (const id of [...stack, node.id]) path.add(id);
+      if (String(node.id) === target) {
+        for (const id of [...stack, String(node.id)]) path.add(id);
         return true;
       }
       return false;
     }
     let found = false;
     for (const { child } of node.children) {
-      if (dfs(child, [...stack, node.id])) found = true;
+      if (dfs(child, [...stack, String(node.id)])) found = true;
     }
     return found;
   }
@@ -315,7 +316,7 @@ function edgeKey(
   a: d3.HierarchyPointNode<TreeNode>,
   b: d3.HierarchyPointNode<TreeNode>
 ) {
-  return `${(a.data as any).id}->${(b.data as any).id}`;
+  return `${String((a.data as any).id)}->${String((b.data as any).id)}`;
 }
 
 function iconFor(type: BulletType) {
@@ -466,6 +467,12 @@ export default function DecisionTreeViz({
     [effectiveData, selectedLeafId]
   );
 
+  console.log({
+  selectedLeafId: String(selectedLeafId),
+  chosenEdgesCount: chosenEdgeKeys.size,
+  sampleEdge: links[0] ? edgeKey(links[0].source as any, links[0].target as any) : null
+});
+
   const chosenPathIds = useMemo(
     () => collectPathIds(effectiveData, selectedLeafId),
     [effectiveData, selectedLeafId]
@@ -477,6 +484,8 @@ const breadcrumb = useMemo(() => {
   const labels: string[] = [];
   // Walk links on path and collect edge labels
   links.forEach(lk => {
+    const ekey = edgeKey(lk.source as any, lk.target as any); // already "a->b"
+    const onChosenPath = chosenEdgeKeys.has(ekey);
     const s = (lk.source.data as any).id;
     const t = (lk.target.data as any).id;
     if (chosenPathIds.has(s) && chosenPathIds.has(t)) {
@@ -590,6 +599,14 @@ const breadcrumb = useMemo(() => {
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <span style={{ fontWeight: 600, letterSpacing: -0.2 }}>Decision Tree</span>
           <span style={{ color: '#94a3b8', fontSize: 12 }}>Click a leaf to choose</span>
+{/*breadcrumb.length > 0 && (
+  <div style={{
+    position: 'absolute', top: 48, left: 12, right: 12,
+    color: '#94a3b8', fontSize: 12
+  }}>
+    <span aria-label="Decision path">{breadcrumb.join('  →  ')}</span>
+  </div>
+)*/}
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button
@@ -631,31 +648,30 @@ const breadcrumb = useMemo(() => {
         role="img"
         aria-label="Interactive decision tree"
       >
-        <defs>
-          <marker
-            id="arrow-green"
-            viewBox="0 0 10 10"
-            refX="9"
-            refY="5"
-            markerWidth="6"
-            markerHeight="6"
-            orient="auto-start-reverse"
-          >
-            <path d="M 0 0 L 10 5 L 0 10 z" fill={green} />
-          </marker>
-          <marker
-            id="arrow-red"
-            viewBox="0 0 10 10"
-            refX="9"
-            refY="5"
-            markerWidth="6"
-            markerHeight="6"
-            orient="auto-start-reverse"
-          >
-            <path d="M 0 0 L 10 5 L 0 10 z" fill={red} />
-          </marker>
-        </defs>
-
+<defs>
+      <marker
+        id="arrow-chosen"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="6"
+        markerHeight="6"
+        orient="auto-start-reverse"
+      >
+        <path d="M 0 0 L 10 5 L 0 10 z" fill={chosen} />
+      </marker>
+      <marker
+        id="arrow-muted"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="6"
+        markerHeight="6"
+        orient="auto-start-reverse"
+      >
+        <path d="M 0 0 L 10 5 L 0 10 z" fill={muted} />
+      </marker>
+    </defs>
         {/* Single pan/zoom group */}
         <g ref={zoomGroupRef}>
           {/* Background for better panning feel */}
@@ -663,69 +679,71 @@ const breadcrumb = useMemo(() => {
 
           {/* Links */}
           <g>
-            {links.map((lk, i) => {
-              const s = { x: (lk.source as any)._x, y: (lk.source as any)._y };
-              const t = { x: (lk.target as any)._x, y: (lk.target as any)._y };
-              const d = linkPath({ source: s, target: t }) as string;
+           {links.map((lk, i) => {
+  const s = { x: (lk.source as any)._x, y: (lk.source as any)._y };
+  const t = { x: (lk.target as any)._x, y: (lk.target as any)._y };
+  const d = linkPath({ source: s, target: t }) as string;
 
-              const sourceId = (lk.source.data as any).id as string;
-              const targetId = (lk.target.data as any).id as string;
-              const onChosenPath =
-                chosenPathIds.has(sourceId) && chosenPathIds.has(targetId);
-              const color = onChosenPath ? green : red;
+  const ekey = edgeKey(lk.source as any, lk.target as any);
+  const onChosenPath = chosenEdgeKeys.has(ekey);
 
-              // Edge label (slightly above mid)
-              const midX = (s.x + t.x) / 2;
-              const midY = (s.y + t.y) / 2 - 12;
-              const label = edgeLabel.get(edgeKey(lk.source as any, lk.target as any));
+  const color = onChosenPath ? chosen /* was green */ : muted /* was red */;
 
-              return (
-                <g key={i}>
-                  <path
-                    d={d}
-                    fill="none"
-                    stroke={color}
-                    strokeWidth={3}
-                    markerEnd={`url(#arrow-${onChosenPath ? 'green' : 'red'})`}
-                  />
-                  {label && (
-                    <g transform={`translate(${midX},${midY})`}>
-                      <rect
-                        x={-64}
-                        y={-14}
-                        width={128}
-                        height={24}
-                        rx={8}
-                        ry={8}
-                        fill={bg}
-                        stroke={color}
-                        strokeWidth={1.5}
-                      />
-                      <text
-                        x={0}
-                        y={0}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        fontSize={12}
-                        fill={color}
-                        style={{ fontFamily: 'ui-rounded, ui-sans-serif, system-ui' }}
-                      >
-                        {label}
-                      </text>
-                    </g>
-                  )}
-                </g>
-              );
-            })}
+  // Edge label (slightly above mid)
+  const midX = (s.x + t.x) / 2;
+  const midY = (s.y + t.y) / 2 - 12;
+  const label = edgeLabel.get(ekey);
+
+  return (
+    <g key={i}>
+      <path
+        d={d}
+        fill="none"
+        stroke={color}
+        strokeWidth={onChosenPath ? 3 : 2}
+        strokeDasharray={onChosenPath ? undefined : '4 6'}
+        markerEnd={`url(#arrow-${onChosenPath ? 'chosen' : 'muted'})`}
+      />
+      {label && (
+        <g transform={`translate(${midX},${midY})`}>
+          <rect
+            x={-64}
+            y={-14}
+            width={128}
+            height={24}
+            rx={8}
+            ry={8}
+            fill={bg}
+            stroke={color}
+            strokeWidth={1.5}
+          />
+          <text
+            x={0}
+            y={0}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fontSize={12}
+            fill={color}
+            style={{ fontFamily: 'ui-rounded, ui-sans-serif, system-ui' }}
+          >
+            {label}
+          </text>
+        </g>
+      )}
+    </g>
+  );
+})}
+ 
           </g>
 
           {/* Nodes */}
           <g>
             {nodes.map((nd, i) => {
               const isLeaf = isOption(nd.data);
-              const id = (nd.data as any).id as string;
+              const id = String((nd.data as any).id);
               const onPath = chosenPathIds.has(id);
-              const border = onPath ? green : red;
+              const border = onPath ? chosen : muted;
+
               const x = (nd as any)._x;
               const y = (nd as any)._y;
 
@@ -759,6 +777,7 @@ const breadcrumb = useMemo(() => {
               }
               const leaf = nd.data as Option;
               return (
+
                 <g
                   key={i}
                   transform={`translate(${x},${y})`}
@@ -774,7 +793,6 @@ const breadcrumb = useMemo(() => {
                   role="button"
                   tabIndex={0}
                   aria-label={`Choose ${leaf.name}`}
-                  style={{ cursor: "pointer" }}
                 >
                   {/* Leaf card background */}
                   <rect
@@ -789,6 +807,7 @@ const breadcrumb = useMemo(() => {
                     strokeWidth={2.5}
                   />
               
+
                   {/* text content inside foreignObject so it can wrap */}
                   <foreignObject
                     x={-leafW / 2 + 10}
@@ -796,14 +815,7 @@ const breadcrumb = useMemo(() => {
                     width={leafW - 20}
                     height={leafH - 20}
                   >
-                    {breadcrumb.length > 0 && (
-  <div style={{
-    position: 'absolute', top: 48, left: 12, right: 12,
-    color: '#94a3b8', fontSize: 12
-  }}>
-    <span aria-label="Decision path">{breadcrumb.join('  →  ')}</span>
-  </div>
-)}
+                    
                     <div
                       style={{
                         display: "flex",
