@@ -1,11 +1,6 @@
-//import DeviceDecisionExplorer from "./DeviceDecisionExplorer";
-
-//export default function Page() {
- // return <DeviceDecisionExplorer />;
-//}
-
-import DeviceDecisionApp from "./DeviceDecisionApp";
+'use client';
+import AppDecisionTree from '@/app/DecisionTreeViz'; // or ../components/DecisionTreeViz
 
 export default function Page() {
-  return <DeviceDecisionApp />;
+  return <AppDecisionTree />;
 }
