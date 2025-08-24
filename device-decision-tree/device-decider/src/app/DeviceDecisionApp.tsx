@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import DecisionTreeViz, { AppTreeNode } from "./DecisionTreeViz"; // adjust path if needed
+
 
 /**
  * DeviceDecisionApp.tsx
@@ -43,14 +45,282 @@ type Contribution = {
   contribution: number;
 };
 
-type ScoredRow = Row & { __score: number; __contribs: Contribution[] };
-
-type TreeNode = {
-  id: string;
-  row: ScoredRow;
-  left: TreeNode | null;
-  right: TreeNode | null;
+// ---- Types ----
+export type ScoredRow = {
+  __score: number;              // numeric target we want to "optimize/explain"
+  __contribs: Contribution[];   // contribution breakdown for each tradeoff
+  [k: string]: any;
 };
+
+type NumericFeature = {
+  kind: "numeric";
+  name: string;                 // key in ScoredRow, e.g. "price_inr" or "battery_hours_min"
+  // Optional preset thresholds (else auto-derive from data)
+  thresholds?: number[];
+};
+
+type CategoricalFeature = {
+  kind: "categorical";
+  name: string;                 // key in ScoredRow
+};
+
+export type Feature = NumericFeature | CategoricalFeature;
+
+export type LeafNode = {
+  id: string;
+  kind: "leaf";
+  prediction: number;           // mean score in this leaf
+  rows: ScoredRow[];            // keep for UI / drilldown
+};
+
+export type InnerNode = {
+  id: string;
+  kind: "node";
+  feature: string;
+  // For numeric splits: row[feature] <= threshold ? left : right
+  threshold?: number;
+  // For categorical splits: row[feature] === category ? left : right
+  category?: string;
+  question: string;             // human-readable prompt for the UI
+  left: TreeNode;
+  right: TreeNode;
+  // optional: diagnostics for tooltips
+  stats?: { n: number; varBefore: number; varAfter: number; gain: number };
+};
+
+export type TreeNode = LeafNode | InnerNode;
+
+export type BuildOptions = {
+  maxDepth?: number;            // e.g. 4–6
+  minSamplesSplit?: number;     // e.g. 8
+  minSamplesLeaf?: number;      // e.g. 3
+  idPrefix?: string;            // default "n"
+  // If you want deterministic yet "balanced-ish", sort candidate thresholds and try midpoints.
+};
+
+// ---- Utilities ----
+const mean = (xs: number[]) => xs.reduce((a,b)=>a+b,0) / Math.max(xs.length,1);
+
+const variance = (xs: number[]) => {
+  if (xs.length <= 1) return 0;
+  const m = mean(xs);
+  return xs.reduce((s,x)=>s+(x-m)*(x-m),0) / (xs.length - 1);
+};
+
+function sse(xs: number[]): number {
+  if (xs.length === 0) return 0;
+  const m = mean(xs);
+  let sum = 0;
+  for (const x of xs) {
+    const d = x - m;
+    sum += d * d;
+  }
+  return sum;
+}
+
+// Compute variance reduction for a candidate split
+function splitScoreSSE(rows: ScoredRow[], left: ScoredRow[], right: ScoredRow[]) {
+  const yAll = rows.map(r => r.__score);
+  const yL   = left.map(r => r.__score);
+  const yR   = right.map(r => r.__score);
+
+  const sseBefore = sse(yAll);
+  const sseAfter  = sse(yL) + sse(yR);
+  const gain      = sseBefore - sseAfter;
+
+  // For diagnostics, report MSE (SSE/N) so numbers feel comparable to “variance”
+  const n = Math.max(yAll.length, 1);
+  const vBefore = sseBefore / n;
+  const vAfter  = sseAfter  / n;
+
+  return { vBefore, vAfter, gain };
+}
+
+// Generate numeric thresholds (unique sorted midpoints) if not provided
+function candidateThresholdsNumeric(rows: ScoredRow[], feature: string, maxCandidates = 16): number[] {
+  const vals = rows
+    .map(r => r[feature])
+    .filter(v => typeof v === "number" && Number.isFinite(v)) as number[];
+  const uniq = Array.from(new Set(vals)).sort((a,b)=>a-b);
+  if (uniq.length <= 1) return [];
+  // Midpoints between consecutive unique values
+  const mids: number[] = [];
+  for (let i = 0; i < uniq.length - 1; i++) {
+    mids.push((uniq[i] + uniq[i+1]) / 2);
+  }
+  // Downsample for speed
+  if (mids.length > maxCandidates) {
+    const step = mids.length / maxCandidates;
+    const picked: number[] = [];
+    for (let i = 0; i < maxCandidates; i++) picked.push(mids[Math.floor(i * step)]);
+    return picked;
+  }
+  return mids;
+}
+
+// Generate categorical categories present
+// Helper: normalize any categorical-ish value to a string token
+function catToken(v: unknown): string {
+  if (v === null || v === undefined) return "";
+  // stringify and lower for case-insensitive matching
+  return String(v).toLowerCase();
+}
+
+// Generate categorical categories present (strings OR booleans)
+function candidateCategories(rows: ScoredRow[], feature: string): string[] {
+  const vals = rows.map(r => r[feature]).filter(v => v !== undefined);
+  const toks = vals.map(catToken);
+  return Array.from(new Set(toks));
+}
+
+
+// ---- Core builder (CART-style regression tree) ----
+export function buildDecisionTree(
+  rows: ScoredRow[],
+  features: Feature[],
+  opts: BuildOptions = {}
+): TreeNode {
+  const {
+    maxDepth = 5,
+    minSamplesSplit = 8,
+    minSamplesLeaf = 3,
+    idPrefix = "n",
+  } = opts;
+
+  function makeLeaf(id: string, group: ScoredRow[]): LeafNode {
+    return {
+      id,
+      kind: "leaf",
+      prediction: mean(group.map(r => r.__score)),
+      rows: group
+    };
+  }
+
+  function bestSplit(group: ScoredRow[]) {
+    let best:
+      | {
+          feature: string;
+          threshold?: number;
+          category?: string;
+          left: ScoredRow[];
+          right: ScoredRow[];
+          vBefore: number;
+          vAfter: number;
+          gain: number;
+          question: string;
+        }
+      | null = null;
+
+      for (const f of features) {
+        const distinct = new Set(group.map(r => r[f.name]).filter(v => v !== undefined && v !== null));
+        
+        if (f.kind === "numeric") {
+          const thresholds = f.thresholds ?? candidateThresholdsNumeric(group, f.name);
+          
+          for (const t of thresholds) {
+            const left  = group.filter(r => typeof r[f.name] === "number" && r[f.name] <= t);
+            const right = group.filter(r => typeof r[f.name] === "number" && r[f.name] >  t);
+            
+            const { vBefore, vAfter, gain } = splitScoreSSE(group, left, right);
+            
+            if (!best || gain > best.gain) {
+              best = {
+                feature: f.name,
+                threshold: t,
+                left, right, vBefore, vAfter, gain,
+                question: `${f.name} ≤ ${Number.isInteger(t) ? t : t.toFixed(2)}?`,
+              };
+            }
+          }
+        } else { // categorical
+          const cats = candidateCategories(group, f.name);
+          
+          for (const c of cats) {
+            const left  = group.filter(r => catToken(r[f.name]) === c);
+            const right = group.filter(r => catToken(r[f.name]) !== c);
+            const { vBefore, vAfter, gain } = splitScoreSSE(group, left, right);
+            
+            if (!best || gain > best.gain) {
+              best = {
+                feature: f.name,
+                category: c,
+                left, right, vBefore, vAfter, gain,
+                question: `${f.name} = "${c}"?`,
+              };
+            }
+          }
+        }
+      }
+      
+    return best;
+  }
+
+  function rec(group: ScoredRow[], depth: number, idPath: string): TreeNode {
+
+    
+    // Stopping criteria
+    if (group.length < minSamplesSplit || depth >= maxDepth) {
+      console.log(`[buildDecisionTree] Stopping due to group.length < minSamplesSplit or depth >= maxDepth:`, {
+        groupLength: group.length,
+        minSamplesSplit,
+        depth,
+        maxDepth
+      });
+      return makeLeaf(`${idPrefix}_${idPath || "root"}`, group);
+    }
+    
+    const y = group.map(r => r.__score);
+    const yVariance = variance(y);
+    
+    if (yVariance === 0) {
+      console.log(`[buildDecisionTree] Stopping due to zero variance in scores`);
+      return makeLeaf(`${idPrefix}_${idPath || "root"}`, group);
+    }
+
+    const split = bestSplit(group);
+
+    
+    if (!split || split.gain <= 1e-12) {
+      console.log(`[buildDecisionTree] Stopping due to no valid split or gain <= 0:`, {
+        hasSplit: !!split,
+        gain: split?.gain
+      });
+      return makeLeaf(`${idPrefix}_${idPath || "root"}`, group);
+    }
+
+    const nodeId = `${idPrefix}_${idPath || "root"}`;
+    const leftNode = rec(split.left,  depth + 1, idPath + "L");
+    const rightNode = rec(split.right, depth + 1, idPath + "R");
+
+    const stats = { n: group.length, varBefore: split.vBefore, varAfter: split.vAfter, gain: split.gain };
+
+    if (split.threshold !== undefined) {
+      return {
+        id: nodeId,
+        kind: "node",
+        feature: split.feature,
+        threshold: split.threshold,
+        question: split.question,
+        left: leftNode,
+        right: rightNode,
+        stats
+      };
+    } else {
+      return {
+        id: nodeId,
+        kind: "node",
+        feature: split.feature,
+        category: split.category!,
+        question: split.question,
+        left: leftNode,
+        right: rightNode,
+        stats
+      };
+    }
+  }
+
+  return rec(rows, 0, "");
+}
 
 // ----------------------------- Config Schema ------------------------------ //
 
@@ -213,6 +483,39 @@ function resolveColumnList(keys: string[] | undefined, headers: string[], cfg: A
   return Array.from(new Set(out));
 }
 
+function makeFeatures(numeric: string[], booleanCols: string[], categorical: string[]): Feature[] {
+  const feats: Feature[] = [];
+  for (const n of numeric) feats.push({ kind: "numeric", name: n });
+  for (const b of booleanCols) feats.push({ kind: "categorical", name: b });
+  for (const c of categorical) feats.push({ kind: "categorical", name: c });
+  return feats;
+}
+
+
+// pick a representative row for a leaf (top score)
+function representativeRow(rows: ScoredRow[], fallbackScore: number): ScoredRow {
+  const best = [...rows].sort((a, b) => b.__score - a.__score)[0];
+  if (best) return best;
+  // synthesize a minimal row if empty
+  return { __score: fallbackScore, __contribs: [] } as ScoredRow;
+}
+
+// ✅ new converter that matches DecisionTreeViz expectations
+function toAppTree(node: TreeNode): AppTreeNode {
+  if (node.kind === "leaf") {
+    const row = representativeRow(node.rows, node.prediction);
+    return { id: node.id, row, left: null, right: null };
+  }
+  // inner nodes don't need real contribs; viz falls back to "Score split"
+  const synthetic: ScoredRow = { __score: 0, __contribs: [] } as any;
+  return {
+    id: node.id,
+    row: synthetic,
+    left: node.left ? toAppTree(node.left) : null,
+    right: node.right ? toAppTree(node.right) : null,
+  };
+}
+
 // ----------------------------- Constraints ------------------------------ //
 
 function applyConstraints(rows: Row[], constraints: Record<string, Constraint>, headers: string[]): Row[] {
@@ -325,10 +628,24 @@ function analyzeConstraintEffects(rows: Row[], constraints: Record<string, Const
 
 // ----------------------------- Optimizer ------------------------------ //
 
-function computeScores(rows: Row[], tradeoffs: Tradeoff[]): ScoredRow[] {
-  if (rows.length === 0 || tradeoffs.length === 0) return rows.map((r) => ({ ...r, __score: 0, __contribs: [] } as unknown as ScoredRow));
+function computeScores(rows: Row[], tradeoffs: Tradeoff[], nameColumn: string): ScoredRow[] {
+  console.log("[computeScores] Starting with:", {
+    rowsCount: rows.length,
+    tradeoffsCount: tradeoffs.length,
+    tradeoffs: tradeoffs.map(t => ({ key: t.key, weight: t.weight, direction: t.direction }))
+  });
+  
+  if (rows.length === 0 || tradeoffs.length === 0) {
+    console.log("[computeScores] No rows or tradeoffs, returning zero scores");
+    return rows.map((r) => ({ ...r, __score: 0, __contribs: [] } as unknown as ScoredRow));
+  }
+  
   const mm: Record<string, { min: number; max: number }> = {};
-  for (const t of tradeoffs) mm[t.key] = getMinMax(rows, t.key) ?? { min: 0, max: 0 };
+  for (const t of tradeoffs) {
+    mm[t.key] = getMinMax(rows, t.key) ?? { min: 0, max: 0 };
+    console.log(`[computeScores] Min/max for ${t.key}:`, mm[t.key]);
+  }
+  
   return rows.map((row) => {
     const contribs: Contribution[] = tradeoffs.map((t) => {
       const raw = row[t.key];
@@ -338,31 +655,18 @@ function computeScores(rows: Row[], tradeoffs: Tradeoff[]): ScoredRow[] {
       if (Number.isFinite(value) && m.max !== m.min) normalized = (value - m.min) / (m.max - m.min);
       const directedComponent = t.direction === "higher" ? normalized : 1 - normalized;
       const contribution = t.weight * directedComponent;
+      
+      console.log(`[computeScores] ${t.key}: raw=${raw}, value=${value}, min=${m.min}, max=${m.max}, normalized=${normalized}, directed=${directedComponent}, contribution=${contribution}`);
+      
       return { key: t.key, value: Number.isFinite(value) ? value : NaN, normalized, weight: t.weight, directedComponent, contribution };
     });
     const __score = contribs.reduce((s, c) => s + c.contribution, 0);
+    console.log(`[computeScores] Row ${row[nameColumn || 'unknown']} total score:`, __score, contribs.map(c => `${c.key}:${c.contribution}`));
     return { ...row, __score, __contribs: contribs } as unknown as ScoredRow;
   });
 }
 
-function mostRelevantTradeoff(contribs: Contribution[]): Contribution | null {
-  if (!contribs.length) return null;
-  return contribs.reduce((best, c) => (Math.abs(c.contribution) > Math.abs(best.contribution) ? c : best));
-}
 
-// ----------------------------- Balanced Tree ------------------------------ //
-
-function buildBalancedTree(rows: ScoredRow[], idPrefix = "n"): TreeNode | null {
-  if (rows.length === 0) return null;
-  const sorted = [...rows].sort((a, b) => a.__score - b.__score);
-  function rec(lo: number, hi: number, path: string): TreeNode | null {
-    if (lo > hi) return null;
-    const mid = Math.floor((lo + hi) / 2);
-    const node: TreeNode = { id: `${idPrefix}_${path || "root"}_${mid}`, row: sorted[mid], left: rec(lo, mid - 1, path + "L"), right: rec(mid + 1, hi, path + "R") };
-    return node;
-  }
-  return rec(0, sorted.length - 1, "");
-}
 
 // ----------------------------- UI ------------------------------ //
 
@@ -509,9 +813,17 @@ export default function DeviceDecisionApp() {
 
     const fr = applyConstraints(rows, base, constraintHeaders);
     setFilteredRows(fr);
-    const sr = computeScores(fr, Object.values(trade));
+    const sr = computeScores(fr, Object.values(trade), nameColumn);
     setScoredRows(sr);
-    setTree(buildBalancedTree(sr));
+
+    const feats = makeFeatures(
+      // use *visible* columns; booleans treated as categorical in the tree
+      visibleHeaders.filter((h) => isNumericColumn(fr, h)),
+      visibleHeaders.filter((h) => isBooleanColumn(fr, h)),
+      visibleHeaders.filter((h) => !isNumericColumn(fr, h) && !isBooleanColumn(fr, h))
+    );
+    setTree(fr.length ? buildDecisionTree(sr, feats, { maxDepth: 5, minSamplesSplit: 3, minSamplesLeaf: 2, idPrefix: "dt" }) : null);
+
   }
 
   const onFile = async (f: File | null) => {
@@ -546,6 +858,7 @@ export default function DeviceDecisionApp() {
       console.groupEnd();
     } catch {}
     const fr = applyConstraints(rawRows, constraints, constraintHeaders);
+
     if (fr.length === 0) {
       try {
         const reasons: Record<string, number> = {};
@@ -569,16 +882,63 @@ export default function DeviceDecisionApp() {
       } catch {}
     }
     setFilteredRows(fr);
-    const sr = computeScores(fr, Object.values(tradeoffs));
+    const sr = computeScores(fr, Object.values(tradeoffs), nameColumn);
     setScoredRows(sr);
-    setTree(buildBalancedTree(sr));
+    
+    const feats = makeFeatures(
+      visibleHeaders.filter((h) => isNumericColumn(fr, h)),
+      visibleHeaders.filter((h) => isBooleanColumn(fr, h)),
+      visibleHeaders.filter((h) => !isNumericColumn(fr, h) && !isBooleanColumn(fr, h))
+    );
+    setTree(fr.length ? buildDecisionTree(sr, feats, { maxDepth: 5, minSamplesSplit: 3, minSamplesLeaf: 2, idPrefix: "dt" }) : null);
   };
 
   React.useEffect(() => {
     if (!filteredRows.length) { setScoredRows([]); setTree(null); return; }
-    const sr = computeScores(filteredRows, Object.values(tradeoffs));
-    setScoredRows(sr); setTree(buildBalancedTree(sr));
-  }, [filteredRows, tradeoffs]);
+    
+    console.log("[Tree Build] Starting tree build with:", {
+      filteredRowsLength: filteredRows.length,
+      tradeoffsCount: Object.keys(tradeoffs).length,
+      visibleHeadersCount: visibleHeaders.length
+    });
+    
+    const sr = computeScores(filteredRows, Object.values(tradeoffs), nameColumn);
+    console.log("[Tree Build] Scored rows:", {
+      scoredRowsLength: sr.length,
+      sampleScores: sr.slice(0, 3).map(r => ({ name: r[nameColumn], score: r.__score }))
+    });
+    
+    setScoredRows(sr);
+
+    const feats = makeFeatures(
+      visibleHeaders.filter((h) => isNumericColumn(filteredRows, h)),
+      visibleHeaders.filter((h) => isBooleanColumn(filteredRows, h)),
+      visibleHeaders.filter((h) => !isNumericColumn(filteredRows, h) && !isBooleanColumn(filteredRows, h))
+    );
+    
+    console.log("[Tree Build] Features:", {
+      numericFeatures: feats.filter(f => f.kind === "numeric").map(f => f.name),
+      categoricalFeatures: feats.filter(f => f.kind === "categorical").map(f => f.name),
+      totalFeatures: feats.length
+    });
+    
+    if (feats.length === 0) {
+      console.warn("[Tree Build] No features available for tree building!");
+      setTree(null);
+      return;
+    }
+    
+    const tree = buildDecisionTree(sr, feats, { maxDepth: 5, minSamplesSplit: 3, minSamplesLeaf: 2, idPrefix: "dt" });
+    console.log("[Tree Build] Built tree:", {
+      treeKind: tree.kind,
+      treeId: tree.id,
+      hasLeft: tree.kind === "node" ? !!tree.left : false,
+      hasRight: tree.kind === "node" ? !!tree.right : false
+    });
+    
+    setTree(tree);
+
+  }, [filteredRows, tradeoffs, visibleHeaders, nameColumn]);
 
   // Log the table after applying constraints (whenever filteredRows changes)
   React.useEffect(() => {
@@ -706,13 +1066,28 @@ export default function DeviceDecisionApp() {
               <SummaryPanel nameColumn={nameColumn} filteredRows={filteredRows} scoredRows={scoredRows} />
             </div>
 
+
             <section className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
               <h2 className="text-lg font-medium mb-2">Balanced Decision Tree</h2>
-              {!tree ? <p className="text-neutral-400">No rows after filtering.</p> : <TreeView node={tree} nameColumn={nameColumn} />}
+
+              {!tree ? (
+                <p className="text-neutral-400">No rows after filtering.</p>
+              ) : (
+                <div className="h-[720px] rounded-xl overflow-hidden">
+                  <DecisionTreeViz
+                    key={`viz-${filteredRows.length}-${scoredRows.length}-${selectedTradeoffs.join("|")}`}
+                    balancedTree={tree ? toAppTree(tree) : (null as any)}
+                    nameColumn={nameColumn}
+                    style={{ height: "100%" }}
+                  />
+                </div>
+              )}
             </section>
           </>
         )}
       </div>
+      <div className="mt-6">
+</div>
     </div>
   );
 }
@@ -940,12 +1315,53 @@ function SummaryPanel({ nameColumn, filteredRows, scoredRows }: SummaryPanelProp
 // ----------------------------- Tree View ------------------------------ //
 
 type TreeViewProps = { node: TreeNode; nameColumn: string };
-function TreeView({ node, nameColumn }: TreeViewProps) { return <div className="overflow-auto"><TreeNodeView node={node} nameColumn={nameColumn} depth={0} /></div>; }
+function TreeView({ node, nameColumn }: TreeViewProps) {
+  return (
+    <div className="overflow-auto">
+      <TreeNodeView node={node} nameColumn={nameColumn} depth={0} />
+    </div>
+  );
+}
 
 type TreeNodeViewProps = { node: TreeNode; nameColumn: string; depth: number };
 function TreeNodeView({ node, nameColumn, depth }: TreeNodeViewProps) {
   const [open, setOpen] = useState(false);
-  const rel = mostRelevantTradeoff(node.row.__contribs);
+
+  // Leaf
+  if (node.kind === "leaf") {
+    // sort a few exemplars by score (desc)
+    const rows = [...node.rows].sort((a,b) => b.__score - a.__score).slice(0, 5);
+    return (
+      <div className="ml-4">
+        <div className="relative">
+          {depth > 0 && <div className="absolute -left-4 top-5 w-4 h-px bg-neutral-700" />}
+          <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-3 my-2">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <div className="font-medium">Leaf • prediction: {node.prediction.toFixed(3)}</div>
+                <div className="text-xs text-neutral-400">samples: {node.rows.length}</div>
+              </div>
+              <button onClick={() => setOpen(o=>!o)} className="px-2 py-1 rounded-md bg-neutral-800 border border-neutral-700 text-xs">
+                {open ? "Hide" : "Top examples"}
+              </button>
+            </div>
+            {open && (
+              <div className="mt-2 text-xs grid grid-cols-1 md:grid-cols-2 gap-2">
+                {rows.map((r, i) => (
+                  <div key={i} className="rounded-md border border-neutral-800 p-2">
+                    <div className="font-medium truncate">{String(r[nameColumn] ?? "(unnamed)")}</div>
+                    <div className="text-neutral-400">score: {r.__score.toFixed(3)}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Inner node
   return (
     <div className="ml-4">
       <div className="relative">
@@ -953,37 +1369,33 @@ function TreeNodeView({ node, nameColumn, depth }: TreeNodeViewProps) {
         <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-3 my-2">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <div className="font-medium">{String(node.row[nameColumn] ?? "(unnamed)")}</div>
-              <div className="text-xs text-neutral-400">score: {node.row.__score.toFixed(3)}</div>
-              {rel && (
-                <div className="text-xs mt-1"><span className="text-neutral-400">relevant tradeoff:</span> <strong>{rel.key}</strong>{Number.isFinite(rel.value) && <span className="text-neutral-400"> = {rel.value}</span>}</div>
-              )}
+              <div className="font-medium">{node.question}</div>
+              <div className="text-xs text-neutral-400">
+                {node.stats ? <>n={node.stats.n} • Δvar={node.stats.gain.toFixed(4)}</> : null}
+              </div>
             </div>
-            <button onClick={() => setOpen((o) => !o)} className="px-2 py-1 rounded-md bg-neutral-800 border border-neutral-700 text-xs">{open ? "Hide" : "Details"}</button>
+            <button onClick={() => setOpen(o=>!o)} className="px-2 py-1 rounded-md bg-neutral-800 border border-neutral-700 text-xs">
+              {open ? "Hide" : "Split details"}
+            </button>
           </div>
           {open && (
-            <div className="mt-2 text-xs grid grid-cols-2 md:grid-cols-3 gap-2">
-              {node.row.__contribs.map((c) => (
-                <div key={c.key} className="rounded-md border border-neutral-800 p-2">
-                  <div className="font-medium">{c.key}</div>
-                  <div className="text-neutral-400">value: {Number.isFinite(c.value) ? c.value : "NA"}</div>
-                  <div className="text-neutral-400">norm: {c.normalized.toFixed(3)}</div>
-                  <div className="text-neutral-400">weight: {c.weight}</div>
-                  <div className="text-neutral-400">dirComp: {c.directedComponent.toFixed(3)}</div>
-                  <div className="text-neutral-300">contrib: {c.contribution.toFixed(3)}</div>
-                </div>
-              ))}
+            <div className="mt-2 text-xs text-neutral-400 space-y-1">
+              <div>feature: <span className="text-neutral-200">{node.feature}</span></div>
+              {node.threshold !== undefined && <div>threshold: {Number.isInteger(node.threshold) ? node.threshold : node.threshold.toFixed(3)}</div>}
+              {node.category !== undefined && <div>category: "{node.category}"</div>}
             </div>
           )}
         </div>
       </div>
+
       <div className="flex gap-8">
         <div className="w-px bg-neutral-700 ml-4" />
         <div className="flex-1">
-          {node.left && (<div><div className="text-xs text-neutral-500 ml-2">◀ lower scores</div><TreeNodeView node={node.left} nameColumn={nameColumn} depth={depth + 1} /></div>)}
-          {node.right && (<div><div className="text-xs text-neutral-500 ml-2">higher scores ▶</div><TreeNodeView node={node.right} nameColumn={nameColumn} depth={depth + 1} /></div>)}
+          {node.left && (<div><div className="text-xs text-neutral-500 ml-2">◀ match (≤ threshold or = category)</div><TreeNodeView node={node.left} nameColumn={nameColumn} depth={depth + 1} /></div>)}
+          {node.right && (<div><div className="text-xs text-neutral-500 ml-2">no‑match ( &gt; threshold or ≠ category ) ▶</div><TreeNodeView node={node.right} nameColumn={nameColumn} depth={depth + 1} /></div>)}
         </div>
       </div>
     </div>
   );
 }
+

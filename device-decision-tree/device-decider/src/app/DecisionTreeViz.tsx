@@ -24,6 +24,201 @@ type Decision = {
 
 type TreeNode = Decision | Option;
 
+// Accept the balanced tree from DeviceDecisionApp without changing its shape
+export type AppContribution = {
+  key: string;
+  value: number;
+  normalized: number;
+  weight: number;
+  directedComponent: number;
+  contribution: number;
+};
+
+export type AppScoredRow = Record<string, any> & {
+  __score: number;
+  __contribs: AppContribution[];
+};
+
+export type AppTreeNode = {
+  id: string;
+  row: Record<string, any> & { __score: number; __contribs: any[] };
+  left: AppTreeNode | null;
+  right: AppTreeNode | null;
+};
+
+type DecisionTreeVizProps = {
+  data?: Decision;
+  initialSelectedLeafId?: string;
+  style?: React.CSSProperties;
+  balancedTree?: AppTreeNode | null;
+  nameColumn?: string;
+};
+
+function friendlyQuestion(metricKey?: string): string {
+  switch(metricKey) {
+    case 'price_inr': return 'Price?';
+    case 'battery_hours_min': return 'Battery?';
+    case 'carry_weight_kg': return 'Weight?';
+    case 'power_adequacy_score': return 'Performance?';
+    case 'display_inches': return 'Screen Size?';
+    case 'learning_hours_sum': return 'Setup Effort?';
+    case 'maintenance_hours_per_year_sum': return 'Maitenance Effort?';
+    default: return 'Overall Best?';
+  }
+}
+
+// Colors
+const chosen = '#2dd4bf';   // teal
+const muted  = '#64748b';   // slate
+const fg     = '#e5e7eb';
+const bg     = '#0b1220';
+const card   = '#0e1626';
+const stroke = '#94a3b8';
+
+// ── Add near the top ─────────────────────────────────────────────
+const FRIENDLY_LABELS: Record<string, { label: string; unit?: string; higherIs?: 'better'|'worse' }> = {
+  price_inr:              { label: 'Price', unit: '₹', higherIs: 'worse' },
+  battery_hours_min:      { label: 'Battery life', unit: 'h', higherIs: 'better' },
+  carry_weight_kg:        { label: 'Weight', unit: 'kg', higherIs: 'worse' },
+  power_adequacy_score:   { label: 'Performance score', higherIs: 'better' },
+  display_inches:         { label: 'Screen size', 'unit': '″', higherIs: 'better' },
+  learning_hours_sum:     { label: 'Learning curve', unit: 'h', higherIs: 'worse' },
+  maintenance_hours_per_year_sum: { label: 'Yearly upkeep', unit: 'h', higherIs: 'worse' },
+};
+
+
+function humanMetric(key?: string) {
+  if (!key) return { question: 'Best overall fit', left: 'lower', right: 'higher' };
+  const m = FRIENDLY_LABELS[key];
+  if (!m) return { question: key, left: 'lower', right: 'higher' };
+  const q = `Which ${m.label} fits better?`;
+  // friendlier edge labels
+  const left  = m.higherIs === 'better' ? `less ${m.label}` : `less ${m.label} (good)`;
+  const right = m.higherIs === 'better' ? `more ${m.label}` : `more ${m.label} (costlier)`;
+  return { question: q, left, right };
+}
+
+function Badge({ children }: { children: React.ReactNode }) {
+  return (
+    <span style={{
+      display: 'inline-block',
+      padding: '2px 8px',
+      borderRadius: 999,
+      border: '1px solid #334155',
+      fontSize: 11,
+      lineHeight: '16px',
+      marginRight: 6
+    }}>{children}</span>
+  );
+}
+
+// ── Add: tiny tooltip helper ─────────────────────────────────────
+function WhyTip({ text }: { text: string }) {
+  return (
+    <span
+      title={text}
+      style={{ borderBottom: '1px dotted #94a3b8', cursor: 'help', marginLeft: 6, fontSize: 11, color: '#94a3b8' }}
+    >
+      Why?
+    </span>
+  );
+}
+
+// Find the most relevant tradeoff on a row (same idea as in your App)
+function mostRelevantTradeoffApp(contribs: AppContribution[]): AppContribution | null {
+  if (!contribs || !contribs.length) return null;
+  return contribs.reduce((best, c) =>
+    Math.abs(c.contribution) > Math.abs(best.contribution) ? c : best
+  );
+}
+
+function topKey(n: AppTreeNode | null): string | undefined {
+  if (!n) return undefined;
+  const top = mostRelevantTradeoffApp((n.row.__contribs || []) as AppContribution[]);
+  return top?.key?.trim() || undefined;
+}
+
+/**
+ * Adapter: convert the balanced binary tree (AppTreeNode) into Decision/Option Tree.
+ * - Internal nodes → Decision (diamond) with question = most relevant tradeoff key (fallback: "Score split")
+ * - Left edge label  → "lower scores"
+ * - Right edge label → "higher scores"
+ * - Leaf → Option card with name + a couple bullets (score + top tradeoff)
+ */
+export function adaptBalancedTreeToViz(
+  node: AppTreeNode,
+  opts: { nameColumn: string; leafBulletCount?: number } = { nameColumn: "name", leafBulletCount: 2 }
+): Decision {
+  const { nameColumn, leafBulletCount = 2 } = opts;
+  
+  function toDecisionOrOption(n: AppTreeNode): Decision | Option {
+    const isLeaf = !n.left && !n.right;
+    if (isLeaf) {
+      const name = String(n.row[nameColumn] ?? "(unnamed)");
+
+      // Build minimal bullets: score + most-relevant tradeoff
+      const top = mostRelevantTradeoffApp(n.row.__contribs || []) || null;
+      const bullets: Option['bullets'] = [
+        { text: `overall fit: ${Number(n.row.__score).toFixed(2)}`, type: 'note' },
+      ];
+
+      if (top) {
+        const m = FRIENDLY_LABELS[top.key];
+        const pretty = m ? m.label : top.key;
+        const valStr = Number.isFinite(top.value) ? ` = ${top.value}` : '';
+        bullets.push({ text: `most influenced by: ${pretty}${valStr}`, type: 'pro' });
+      }
+      // If desired, add a third bullet by peeking second-best; keeping minimal for step 1
+      const option: Option = {
+        kind: 'option',
+        id: n.id,
+        name,
+        bullets: bullets.slice(0, leafBulletCount),
+      } as Option;
+      (option as any).row = n.row;
+      return option;
+
+    }
+
+    const rel = mostRelevantTradeoffApp(n.row.__contribs || []);
+      const metric =
+        (rel?.key && String(rel.key).trim()) ||
+        topKey(n.left) ||
+        topKey(n.right) ||
+        Object.keys(n.row).find(
+          (k) => k !== "__score" && !k.startsWith("__") && typeof n.row[k] === "number"
+        ) ||
+        "";
+
+      // then keep your existing labels:
+      const question  = metric ? friendlyQuestion(metric) : "Best overall fit";
+      const left = metric ? `less ${metric}` : "lower scores";
+      const right = metric ? `more ${metric}` : "higher scores";
+    //const { question, left, right } = humanMetric(metricKey || undefined);
+
+    const children: Decision['children'] = [];
+    if (n.left)  children.push({ label: left,  child: toDecisionOrOption(n.left)  });
+    if (n.right) children.push({ label: right, child: toDecisionOrOption(n.right) });
+
+
+    return { kind: 'decision', id: n.id, question, children };
+  }
+
+  // Wrap the converted node under a synthetic root if needed (optional). Here we convert the root itself.
+  const converted = toDecisionOrOption(node);
+  if (converted.kind === "decision") return converted;
+
+  // If the input happens to be a single leaf, create a tiny root
+  const root = {
+    kind: "decision" as const,
+    id: "root",
+    question: "Top result",
+    children: [{ label: "", child: converted }],
+  };
+
+  return root;
+}
+
 /** ----------------------------------------------------------------
  * Sample data (replace with your tree)
  * ---------------------------------------------------------------- */
@@ -158,18 +353,35 @@ function useContainerSize<T extends HTMLElement>() {
   return { ref, ...size } as const;
 }
 
+function collectChosenEdges(root: Decision, toLeafId?: string) {
+  const edges = new Set<string>();
+  if (!toLeafId) return edges;
+
+  function walk(n: TreeNode): boolean {
+    if (isOption(n)) return String(n.id) === String(toLeafId);
+    let used = false;
+    for (const { child } of n.children) {
+      if (walk(child)) {
+        edges.add(`${String((n as Decision).id)}->${String((child as any).id)}`);
+        used = true;
+      }
+    }
+    return used;
+  }
+  walk(root);
+  return edges;
+}
+
 /** ----------------------------------------------------------------
  * Component (TOP-DOWN layout)
  * ---------------------------------------------------------------- */
 export default function DecisionTreeViz({
-  data = sampleTree,
+  data: fallbackData = sampleTree,
   initialSelectedLeafId = 'pro14m4',
   style,
-}: {
-  data?: Decision;
-  initialSelectedLeafId?: string;
-  style?: React.CSSProperties;
-}) {
+  balancedTree,
+  nameColumn = "name",
+}: DecisionTreeVizProps) {
   const [selectedLeafId, setSelectedLeafId] = useState<string | undefined>(
     initialSelectedLeafId
   );
@@ -188,8 +400,35 @@ export default function DecisionTreeViz({
   const H_SPACING = leafW + 120; // siblings distance
   const V_SPACING = 240;         // parent→child distance
 
+
+  const effectiveData: Decision = useMemo(() => {
+    console.log("[DecisionTreeViz] effectiveData calculation:", {
+      hasBalancedTree: !!balancedTree,
+      balancedTreeId: balancedTree?.id,
+      nameColumn,
+      fallbackDataId: fallbackData.id
+    });
+    
+    if (balancedTree) {
+      try {
+        const result = adaptBalancedTreeToViz(balancedTree, { nameColumn, leafBulletCount: 2 });
+        console.log("[DecisionTreeViz] Successfully adapted tree:", {
+          resultId: result.id,
+          resultKind: result.kind,
+          childrenCount: result.kind === "decision" ? result.children.length : 0
+        });
+        return result;
+      } catch (e) {
+        console.warn("[DecisionTreeViz] adaptBalancedTreeToViz failed; falling back", e);
+        return fallbackData;
+      }
+    }
+    console.log("[DecisionTreeViz] Using fallback data");
+    return fallbackData;
+  }, [balancedTree, fallbackData, nameColumn]); 
+
   const { nodes, links, edgeLabel, contentSize } = useMemo(() => {
-    const { d3Root, edgeLabel } = buildHierarchy(data);
+    const { d3Root, edgeLabel } = buildHierarchy(effectiveData);
 
     const treeLayout = d3
       .tree<TreeNode>()
@@ -220,12 +459,36 @@ export default function DecisionTreeViz({
     });
 
     return { nodes, links, edgeLabel, contentSize };
-  }, [data]);
+  }, [effectiveData]);
+
+  const chosenEdgeKeys = useMemo(
+    () => collectChosenEdges(effectiveData, selectedLeafId),
+    [effectiveData, selectedLeafId]
+  );
 
   const chosenPathIds = useMemo(
-    () => collectPathIds(data, selectedLeafId),
-    [data, selectedLeafId]
+    () => collectPathIds(effectiveData, selectedLeafId),
+    [effectiveData, selectedLeafId]
   );
+
+// Build breadcrumb from chosenPathIds
+const breadcrumb = useMemo(() => {
+  if (!selectedLeafId) return [];
+  const labels: string[] = [];
+  // Walk links on path and collect edge labels
+  links.forEach(lk => {
+    const s = (lk.source.data as any).id;
+    const t = (lk.target.data as any).id;
+    if (chosenPathIds.has(s) && chosenPathIds.has(t)) {
+      const lbl = edgeLabel.get(edgeKey(lk.source as any, lk.target as any));
+      if (lbl) labels.push(lbl);
+    }
+  });
+  const leafName = nodes.find(n => (n.data as any).id === selectedLeafId)?.data as any;
+  if (leafName?.name) labels.push(leafName.name);
+  return labels;
+}, [selectedLeafId, links, chosenPathIds, edgeLabel, nodes]);
+
 
   // D3 zoom/pan (no React state → no rerender loop)
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -330,7 +593,9 @@ export default function DecisionTreeViz({
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button
-            onClick={() => setSelectedLeafId(undefined)}
+            onClick={() => {
+              setSelectedLeafId(undefined)}
+            }
             style={{
               padding: '6px 10px',
               fontSize: 12,
@@ -467,7 +732,7 @@ export default function DecisionTreeViz({
               if (!isLeaf) {
                 const q = nd.data as Decision;
                 return (
-                  <g key={i} transform={`translate(${x},${y})`}>
+                  <g key={i} transform={`translate(${x},${y})`} style={{ transition: 'transform 250ms ease, opacity 250ms ease', opacity: onPath ? 1 : 0.85 }}>
                     {/* Diamond (question) */}
                     <path
                       d={`M 0 ${-qH / 2} L ${qW / 2} 0 L 0 ${qH / 2} L ${-qW / 2} 0 Z`}
@@ -492,11 +757,26 @@ export default function DecisionTreeViz({
                   </g>
                 );
               }
-
               const leaf = nd.data as Option;
               return (
-                <g key={i} transform={`translate(${x},${y})`}>
-                  {/* Leaf card */}
+                <g
+                  key={i}
+                  transform={`translate(${x},${y})`}
+                  style={{ transition: 'transform 250ms ease, opacity 250ms ease', opacity: onPath ? 1 : 0.85 }}
+                  onClick={(e) => { e.stopPropagation(); setSelectedLeafId(leaf.id); }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setSelectedLeafId(leaf.id);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Choose ${leaf.name}`}
+                  style={{ cursor: "pointer" }}
+                >
+                  {/* Leaf card background */}
                   <rect
                     x={-leafW / 2}
                     y={-leafH / 2}
@@ -508,55 +788,69 @@ export default function DecisionTreeViz({
                     stroke={border}
                     strokeWidth={2.5}
                   />
-                  {/* Click target */}
-                  <rect
-                    x={-leafW / 2}
-                    y={-leafH / 2}
-                    width={leafW}
-                    height={leafH}
-                    rx={leafR}
-                    ry={leafR}
-                    fill="transparent"
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => setSelectedLeafId(leaf.id)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        setSelectedLeafId(leaf.id);
-                      }
-                    }}
-                    tabIndex={0}
-                  />
-                  {/* Title */}
-                  <text
-                    x={-leafW / 2 + 14}
-                    y={-leafH / 2 + 26}
-                    fontSize={14}
-                    fill={fg}
-                    style={{
-                      fontWeight: 700,
-                      fontFamily: 'ui-rounded, ui-sans-serif, system-ui',
-                    }}
+              
+                  {/* text content inside foreignObject so it can wrap */}
+                  <foreignObject
+                    x={-leafW / 2 + 10}
+                    y={-leafH / 2 + 10}
+                    width={leafW - 20}
+                    height={leafH - 20}
                   >
-                    {leaf.name}
-                  </text>
-                  {/* Bullets */}
-                  <g transform={`translate(${-leafW / 2 + 14}, ${-leafH / 2 + 46})`}>
-                    {leaf.bullets.slice(0, 6).map((b, idx) => (
-                      <g key={idx} transform={`translate(0, ${idx * 20})`}>
-                        <text x={0} y={0} fontSize={13} fill={fg}>
-                          {iconFor(b.type)}{' '}
-                          <tspan fill={b.type === 'con' ? '#fca5a5' : fg}>
+                    {breadcrumb.length > 0 && (
+  <div style={{
+    position: 'absolute', top: 48, left: 12, right: 12,
+    color: '#94a3b8', fontSize: 12
+  }}>
+    <span aria-label="Decision path">{breadcrumb.join('  →  ')}</span>
+  </div>
+)}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        fontSize: "13px",
+                        color: "#e5e7eb",
+                        fontFamily: "ui-rounded, ui-sans-serif, system-ui",
+                        overflow: "hidden",
+                        wordWrap: "break-word",
+                      }}
+                    >
+                      <div style={{ fontWeight: 700, marginBottom: 4 }}>
+  {leaf.name}
+  {/* Why? tooltip synthesizing top tradeoff */}
+  {leaf.bullets[1] && <WhyTip text={leaf.bullets[1].text} />}
+</div>
+<div style={{ marginBottom: 6 }}>
+  {'price_inr' in leaf && null /* silences TS if not present */}
+  <Badge>💰 {Intl.NumberFormat('en-IN').format((leaf as any).row?.price_inr ?? leafW /* fallback removed */)}</Badge>
+  {((leaf as any).row?.battery_hours_min) && <Badge>🔋 {(leaf as any).row.battery_hours_min}h</Badge>}
+  {((leaf as any).row?.carry_weight_kg) && <Badge>⚖️ {(leaf as any).row.carry_weight_kg}kg</Badge>}
+</div>
+                      {leaf.bullets.slice(0, 4).map((b, idx) => (
+                        <div key={idx} style={{ fontSize: "12px", marginBottom: 2 }}>
+                          {iconFor(b.type)}{" "}
+                          <span style={{ color: b.type === "con" ? "#fca5a5" : "#e5e7eb" }}>
                             {b.text}
-                          </tspan>
-                        </text>
-                      </g>
-                    ))}
-                  </g>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </foreignObject>
                 </g>
               );
             })}
           </g>
+          <rect
+      x={-leafW / 2}
+      y={-leafH / 2}
+      width={leafW}
+      height={leafH}
+      rx={leafR}
+      ry={leafR}
+      fill="black"
+      fillOpacity={0.001}
+      pointerEvents="visiblePainted"
+    />
         </g>
       </svg>
 

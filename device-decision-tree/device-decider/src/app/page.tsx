@@ -20,16 +20,6 @@ export default function Page() {
               <DeviceDecisionApp />
             </div>
           </div>
-          
-          {/* Decision Tree Section - Bottom */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-700">
-              Decision Tree Visualization
-            </h2>
-            <div className="border rounded-lg p-4 bg-gray-50">
-              <AppDecisionTree />
-            </div>
-          </div>
         </div>
       </div>
     </div>

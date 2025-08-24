@@ -13,8 +13,8 @@
       "categorical": { "includes": "", "exact": false }
     },
     "overrides": {
-      "price_inr": { "min": 90000, "max": 160000 },
-      "ram_gb_sum": { "min": 32, "max": 256 },
+      "price_inr": { "min": 90000, "max": 130000 },
+      "ram_gb_sum": { "min": 16, "max": 32 },
       "chip": { "includes": "M4 Pro,M4 Max" }
     }
   },

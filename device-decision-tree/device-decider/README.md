@@ -25,6 +25,8 @@ npm i framer-motion lucide-react
 npx shadcn@latest init -d
 npx shadcn@latest add button card badge
 npx shadcn@latest add input label
+
+npm install --save-dev @types/d3
 ```
 
 * If it asks about an alias, pick `@/` (default).
